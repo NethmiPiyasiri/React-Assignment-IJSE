@@ -1,11 +1,18 @@
-// src/components/MarkAsFoundModal/MarkAsFoundModal.tsx
 import React, { useState } from "react";
+import * as Yup from "yup";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 type MarkAsFoundModalProps = {
   onClose: () => void;
   onSubmit: (info: { location: string; remark: string }) => void;
   itemTitle: string;
 };
+
+const validationSchema = Yup.object().shape({
+  location: Yup.string().required("Location is required"),
+  remark: Yup.string().optional(),
+});
 
 const MarkAsFoundModal: React.FC<MarkAsFoundModalProps> = ({
   onClose,
@@ -15,7 +22,18 @@ const MarkAsFoundModal: React.FC<MarkAsFoundModalProps> = ({
   const [location, setLocation] = useState("");
   const [remark, setRemark] = useState("");
 
-  const handleSubmit = () => {
+  const {
+    trigger,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+    mode: "onTouched",
+  });
+
+  const handleFormSubmit = async () => {
+    const isValid = await trigger();
+    if (!isValid) return;
+
     onSubmit({ location, remark });
     onClose();
   };
@@ -37,6 +55,9 @@ const MarkAsFoundModal: React.FC<MarkAsFoundModalProps> = ({
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-400"
             placeholder="e.g., Admin Office, Security Desk"
           />
+          {errors.location && (
+            <p className="text-red-500 text-sm mt-1">{errors.location.message}</p>
+          )}
         </div>
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -49,6 +70,9 @@ const MarkAsFoundModal: React.FC<MarkAsFoundModalProps> = ({
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-400"
             placeholder="Any additional details..."
           />
+          {errors.remark && (
+            <p className="text-red-500 text-sm mt-1">{errors.remark.message}</p>
+          )}
         </div>
         <div className="flex justify-end gap-3">
           <button
@@ -58,7 +82,7 @@ const MarkAsFoundModal: React.FC<MarkAsFoundModalProps> = ({
             Cancel
           </button>
           <button
-            onClick={handleSubmit}
+            onClick={handleFormSubmit}
             className="px-4 py-2 text-sm bg-green-500 hover:bg-green-600 text-white rounded-md"
           >
             Submit

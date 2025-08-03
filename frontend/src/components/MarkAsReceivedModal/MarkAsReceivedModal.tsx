@@ -1,5 +1,10 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
+import { BASE_URL } from "../../utils/app.constants";
+import { axiosPrivateInstance } from "../../utils/axios.instance";
+import * as Yup from "yup";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 type MarkAsReceivedModalProps = {
   item: {
@@ -12,16 +17,42 @@ type MarkAsReceivedModalProps = {
   onClose: () => void;
 };
 
+const validationSchema = Yup.object().shape({
+  receivers_name: Yup.string().required("Receiver name is required"),
+  id: Yup.string()
+    .matches(/^[0-9]{9}[vVxX]|[0-9]{12}$/, "Invalid NIC/ID format")
+    .required("NIC / ID number is required"),
+  receive_remark: Yup.string().optional(),
+});
+
 const MarkAsReceivedModal: React.FC<MarkAsReceivedModalProps> = ({ item, onClose }) => {
   const [formData, setFormData] = useState({
-    name: "",
+    receivers_name: "",
     id: "",
-    remarks: "",
+    receive_remark: "",
   });
 
+  const {
+    handleSubmit,
+    trigger,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+    mode: "onTouched",
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async () => {
+    const isValid = await trigger();
+    if (!isValid) return;
+
+    try {
+      await axiosPrivateInstance.put(`${BASE_URL}/api/lost/${item.id}`, {
+        ...formData,
+      });
+    } catch (err) {
+      console.error("Failed to mark item as received:", err);
+    }
+
     console.log("Mark as received:", { ...formData, item });
     onClose();
   };
@@ -38,20 +69,22 @@ const MarkAsReceivedModal: React.FC<MarkAsReceivedModalProps> = ({ item, onClose
         <h2 className="text-xl font-bold text-gray-800 mb-4">
           Mark "{item.title}" as Received
         </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Receiver Name
             </label>
             <input
               type="text"
-              required
               className="w-full mt-1 p-2 border border-gray-200 rounded-md"
-              value={formData.name}
+              value={formData.receivers_name}
               onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
+                setFormData({ ...formData, receivers_name: e.target.value })
               }
             />
+            {errors.receivers_name && (
+              <p className="text-red-500 text-sm mt-1">{errors.receivers_name.message}</p>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">
@@ -59,13 +92,15 @@ const MarkAsReceivedModal: React.FC<MarkAsReceivedModalProps> = ({ item, onClose
             </label>
             <input
               type="text"
-              required
               className="w-full mt-1 p-2 border border-gray-200 rounded-md"
               value={formData.id}
               onChange={(e) =>
                 setFormData({ ...formData, id: e.target.value })
               }
             />
+            {errors.id && (
+              <p className="text-red-500 text-sm mt-1">{errors.id.message}</p>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">
@@ -74,11 +109,14 @@ const MarkAsReceivedModal: React.FC<MarkAsReceivedModalProps> = ({ item, onClose
             <textarea
               rows={3}
               className="w-full mt-1 p-2 border border-gray-200 rounded-md"
-              value={formData.remarks}
+              value={formData.receive_remark}
               onChange={(e) =>
-                setFormData({ ...formData, remarks: e.target.value })
+                setFormData({ ...formData, receive_remark: e.target.value })
               }
             />
+            {errors.receive_remark && (
+              <p className="text-red-500 text-sm mt-1">{errors.receive_remark.message}</p>
+            )}
           </div>
           <div className="text-right">
             <button
