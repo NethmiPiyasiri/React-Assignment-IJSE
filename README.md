@@ -6,7 +6,7 @@
 
 1. **Clone & install backend**
    ```bash
-   git clone <repository-url>
+   git clone 'https://github.com/NethmiPiyasiri/React-Assignment-IJSE.git'
    cd backend
    npm install
    ```
