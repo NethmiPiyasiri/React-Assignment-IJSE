@@ -15,7 +15,7 @@
    - Open `.env` in `backend` and set:
      ```env
      DB_USER=your_mysql_username
-     DB_PASSWORD=your_mysql_password
+     DB_PASS=your_mysql_password
      ```
    - Create the database in MySQL:
      ```sql
