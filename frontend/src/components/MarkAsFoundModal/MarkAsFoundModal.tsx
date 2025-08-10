@@ -10,7 +10,7 @@ type MarkAsFoundModalProps = {
 };
 
 const validationSchema = Yup.object().shape({
-  location: Yup.string().required("Location is required"),
+  location: Yup.string(),
   remark: Yup.string().optional(),
 });
 

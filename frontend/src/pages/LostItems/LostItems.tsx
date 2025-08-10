@@ -56,6 +56,7 @@ const LostItems = () => {
       fetchLostItems();
     } catch (err) {
       console.error("Failed to mark item as found:", err);
+      alert("Failed to mark item as found. Please try again.");
     }
   };
 

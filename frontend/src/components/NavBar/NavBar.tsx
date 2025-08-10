@@ -8,6 +8,11 @@ import {
 } from "flowbite-react";
 
 const NavBar = () => {
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    window.location.href = "/login"; // Redirect to login page
+  };
+
   return (
     <Navbar fluid rounded>
       <NavbarBrand href="https://flowbite-react.com">
@@ -18,7 +23,7 @@ const NavBar = () => {
         />
       </NavbarBrand>
       <div className="flex md:order-2">
-        <Button color="green" outline>
+        <Button onClick={handleLogout} color="green" outline>
           Logout
         </Button>
         <NavbarToggle />

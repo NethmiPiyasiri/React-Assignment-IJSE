@@ -7,8 +7,8 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 const loginSchema = Yup.object().shape({
-  email: Yup.string().email("Invalid email").required("Email is required"),
-  password: Yup.string().min(6, "Minimum 6 characters").required("Password is required"),
+  email: Yup.string().email("Invalid email"),
+  password: Yup.string(),
 });
 
 const Login = () => {
@@ -40,6 +40,7 @@ const Login = () => {
       navigate("/");
     } catch (error) {
       console.error("Login failed:", error);
+      alert("Login failed. Please check your credentials and try again.");
     }
   };
 

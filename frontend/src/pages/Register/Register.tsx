@@ -28,10 +28,11 @@ const Register = () => {
       });
 
       console.log("Registration successful:", response.data);
-      navigate("/register");
+      navigate("/login");
       // Redirect or show success message
     } catch (error) {
       console.error("Registration failed:", error);
+      alert("Registration failed. Please try again.");
     }
   };
 

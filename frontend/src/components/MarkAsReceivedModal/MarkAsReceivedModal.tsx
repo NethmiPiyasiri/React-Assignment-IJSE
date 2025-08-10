@@ -18,10 +18,9 @@ type MarkAsReceivedModalProps = {
 };
 
 const validationSchema = Yup.object().shape({
-  receivers_name: Yup.string().required("Receiver name is required"),
+  receivers_name: Yup.string(),
   id: Yup.string()
-    .matches(/^[0-9]{9}[vVxX]|[0-9]{12}$/, "Invalid NIC/ID format")
-    .required("NIC / ID number is required"),
+    .matches(/^[0-9]{9}[vVxX]|[0-9]{12}$/, "Invalid NIC/ID format"),
   receive_remark: Yup.string().optional(),
 });
 
