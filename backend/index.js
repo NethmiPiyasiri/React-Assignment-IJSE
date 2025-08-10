@@ -2,7 +2,6 @@ const express = require("express");
 const dotenv = require("dotenv");
 const app = express();
 const cors = require("cors");
-const cookieParser = require("cookie-parser");
 
 dotenv.config();
 
@@ -20,7 +19,6 @@ app.use(cors(corsOptions));
 dotenv.config();
 
 app.use(express.json());
-app.use(cookieParser());
 
 // Basic route
 app.get("/", (req, res) => {
